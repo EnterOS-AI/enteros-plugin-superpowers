@@ -49,7 +49,7 @@ superpowers/
 ### Setup
 
 ```bash
-git clone https://github.com/Molecule-AI/molecule-ai-plugin-superpowers.git
+git clone https://git.moleculesai.app/molecule-ai/molecule-ai-plugin-superpowers.git
 cd molecule-ai-plugin-superpowers
 
 # Validate plugin.yaml
