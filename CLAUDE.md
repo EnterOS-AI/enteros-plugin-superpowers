@@ -5,7 +5,7 @@ high-level skills covering the full development lifecycle: systematic debugging,
 test-driven development, planning, plan execution, and pre-completion verification.
 
 **Version:** 1.0.0
-**Runtime:** `claude_code`, `deepagents`, `hermes`
+**Runtime:** `claude_code`, `hermes`
 
 ---
 

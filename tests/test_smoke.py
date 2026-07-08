@@ -47,6 +47,10 @@ class TestPluginManifest(unittest.TestCase):
     def test_runtimes_include_claude_code(self):
         self.assertIn('claude_code', self.manifest.get('runtimes', []))
 
+    def test_runtimes_are_live_platform_runtimes(self):
+        live_runtimes = {'claude_code', 'hermes'}
+        self.assertEqual(set(self.manifest.get('runtimes', [])), live_runtimes)
+
     def test_all_five_skills_declared(self):
         skills = self.manifest.get('skills', [])
         for skill in SKILLS:
@@ -100,27 +104,26 @@ class TestSkillFrontmatter(unittest.TestCase):
 
 
 class TestAdapters(unittest.TestCase):
-    """Verify both runtime adapters re-export AgentskillsAdaptor."""
+    """Verify declared runtime adapters re-export AgentskillsAdaptor."""
 
-    def test_claude_code_adapter_exists(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'claude_code.py')
-        self.assertTrue(os.path.isfile(path))
+    @classmethod
+    def setUpClass(cls):
+        import yaml
+        manifest_path = os.path.join(REPO_ROOT, 'plugin.yaml')
+        with open(manifest_path) as f:
+            cls.runtimes = yaml.safe_load(f).get('runtimes', [])
 
-    def test_deepagents_adapter_exists(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'deepagents.py')
-        self.assertTrue(os.path.isfile(path))
+    def test_declared_runtime_adapters_exist(self):
+        for runtime in self.runtimes:
+            path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
+            self.assertTrue(os.path.isfile(path), f"missing adapter for {runtime}")
 
-    def test_claude_code_re_exports_agentskills_adaptor(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'claude_code.py')
-        with open(path) as f:
-            content = f.read()
-        self.assertIn('AgentskillsAdaptor', content)
-
-    def test_deepagents_re_exports_agentskills_adaptor(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'deepagents.py')
-        with open(path) as f:
-            content = f.read()
-        self.assertIn('AgentskillsAdaptor', content)
+    def test_declared_runtime_adapters_re_export_agentskills_adaptor(self):
+        for runtime in self.runtimes:
+            path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
+            with open(path) as f:
+                content = f.read()
+            self.assertIn('AgentskillsAdaptor', content, f"{runtime} adapter")
 
 
 class TestValidatePlugin(unittest.TestCase):

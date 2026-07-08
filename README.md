@@ -42,7 +42,6 @@ github://Molecule-AI/molecule-ai-plugin-superpowers
 ## Runtimes
 
 - `claude_code` — primary
-- `deepagents` — supported
 - `hermes` — supported
 
 ## Architecture
@@ -56,6 +55,7 @@ skills/
   writing-plans/
 adapters/
   claude_code.py      # Registers all skills
+  hermes.py           # Registers all skills
 ```
 
 ## Known issues
