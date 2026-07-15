@@ -43,8 +43,7 @@ superpowers/
 
 - Node.js >= 18 (for markdownlint, if editing `.md` files)
 - Python 3.11+ (for YAML validation)
-- `gh` CLI authenticated
-- Write access to `Molecule-AI/molecule-ai-plugin-superpowers`
+- Write access to `molecule-ai/molecule-ai-plugin-superpowers` in Gitea
 
 ### Setup
 
@@ -80,11 +79,13 @@ print('No credentials: OK')
 
 ## Release Process
 
-1. Review changes: `git log origin/main..HEAD --oneline`
-2. Bump `version` in `plugin.yaml` (semver)
-3. Commit: `chore: bump version to X.Y.Z`
-4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
-5. Create GitHub Release with changelog
+1. Create a release branch and bump `version` in `plugin.yaml` (semver).
+2. Review changes: `git log origin/main..HEAD --oneline`.
+3. Commit the bump and merge it through a reviewed, green Gitea PR.
+4. Fetch the merged `main`, tag the exact reviewed merge commit, and push only
+   that tag: `git tag vX.Y.Z <merge-sha> && git push origin vX.Y.Z`.
+5. If a release page is needed, create the Gitea release from that tag with the
+   reviewed changelog.
 
 ---
 

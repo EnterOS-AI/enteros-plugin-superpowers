@@ -17,16 +17,14 @@
 #         status itself is per-SHA so we re-post on the new head).
 #   - `issue_comment`: created, edited, deleted
 #       → fires on any new comment so /sop-ack / /sop-revoke take
-#         effect immediately (Gitea 1.22.6 doesn't refire on
-#         pull_request_review per feedback_pull_request_review_no_refire,
-#         so issue_comment is the canonical refire channel).
+#         effect immediately. issue_comment is the canonical refire channel
+#         for this slash-command contract.
 #
 # Trust boundary (mirrors RFC#324 §A4 + sop-tier-check security note):
 #   `pull_request_target` (not `pull_request`) — workflow def is loaded
-#   from BASE branch, so a PR cannot rewrite this workflow to exfiltrate
-#   the token. The `actions/checkout` step pins `ref: base.sha` so the
-#   script ALSO comes from BASE. PR-HEAD code is never executed in the
-#   runner.
+#   from the trusted default branch, so a PR cannot rewrite this workflow to
+#   exfiltrate the token. The checkout step explicitly pins that branch;
+#   PR-HEAD code is never executed in the runner.
 #
 # Token scope:
 #   - read:repository, read:organization for PR + comments + team probes
@@ -76,10 +74,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
-  # NOTE: `statuses: write` is the GitHub-Actions name for POST /statuses.
-  # Gitea 1.22.6 may not gate on this permission key (it just checks the
-  # token), but listing it explicitly documents intent for the next
-  # platform-version upgrade.
+  # Actions-compatible permission name for posting the commit status.
   statuses: write
 
 jobs:
@@ -95,7 +90,7 @@ jobs:
         contains(github.event.comment.body, '/sop-revoke')))
     runs-on: ubuntu-latest
     steps:
-      - name: Check out BASE ref (trust boundary — never PR-head)
+      - name: Check out trusted default branch (never PR-head)
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           # For pull_request_target, the default branch is the trust

@@ -10,7 +10,7 @@
 #   - issue_comment:       [created, edited, deleted]
 #
 # Flow:
-#   1. Load .gitea/sop-checklist-config.yaml (from BASE ref — trusted).
+#   1. Load .gitea/sop-checklist-config.yaml (from trusted default branch).
 #   2. GET /repos/{R}/pulls/{N}          — author, head.sha, tier label
 #   3. GET /repos/{R}/issues/{N}/comments — extract /sop-ack and /sop-revoke
 #   4. For each checklist item:
@@ -22,14 +22,14 @@
 #      state=success | failure | pending, description=`acked: N/M …`.
 #
 # Trust boundary (mirrors RFC#324 §A4):
-#   This script is loaded from the BASE branch. The workflow's
-#   actions/checkout step pins ref=base.sha. PR-HEAD code is never
-#   executed. We only HTTP-call the Gitea API.
+#   This script is loaded from the trusted repository default branch. The
+#   workflow's checkout step pins that branch explicitly. PR-HEAD code is
+#   never executed. We only HTTP-call the Gitea API.
 #
 # Token scope:
 #   - read:repository / read:organization to enumerate PR + comments
-#     + team membership (Gitea 1.22.6 quirk: team-membership endpoint
-#     returns 403 if token owner is not in the team; see review-check.sh
+#     + team membership (the team-membership endpoint returns 403 if the
+#     token owner is not in the team; see review-check.sh
 #     for the same gotcha — we surface the same fail-closed message).
 #   - write:repository for `POST /repos/{R}/statuses/{sha}`. Unlike
 #     RFC#324's pattern (which uses the JOB's own pass/fail as the

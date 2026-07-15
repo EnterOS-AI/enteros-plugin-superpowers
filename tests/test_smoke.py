@@ -135,6 +135,34 @@ class TestAdapters(unittest.TestCase):
             self.assertIn('AgentskillsAdaptor', content, f"{runtime} adapter")
 
 
+class TestCurrentRepositoryGuidance(unittest.TestCase):
+    """Keep active install, release, and workflow guidance domain-only."""
+
+    def test_active_guidance_has_no_retired_scm_or_operator_paths(self):
+        active_paths = (
+            'README.md',
+            'CLAUDE.md',
+            '.gitea/workflows/gitea-merge-queue.yml',
+            '.gitea/workflows/sop-checklist-gate.yml',
+            '.gitea/scripts/gitea-merge-queue.py',
+            '.gitea/scripts/sop-checklist-gate.py',
+        )
+        active_guidance = '\n'.join(
+            open(os.path.join(REPO_ROOT, path)).read()
+            for path in active_paths
+        )
+        for retired in (
+            'github://Molecule-AI',
+            'gh CLI authenticated',
+            'Create GitHub Release',
+            'operator conductor',
+            'operator host',
+            '/etc/molecule-bootstrap',
+            'Gitea 1.22.6',
+        ):
+            self.assertNotIn(retired, active_guidance)
+
+
 class TestValidatePlugin(unittest.TestCase):
     """Smoke-test validate-plugin.py if present."""
 
