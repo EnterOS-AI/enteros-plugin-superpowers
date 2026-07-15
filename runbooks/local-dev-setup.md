@@ -7,8 +7,8 @@ This runbook covers setting up a local development environment for `superpowers`
 ## Prerequisites
 
 - Python 3.11+
-- `gh` CLI authenticated
-- Write access to `Molecule-AI/molecule-ai-plugin-superpowers`
+- Gitea credentials for `git.moleculesai.app`
+- Write access to `molecule-ai/molecule-ai-plugin-superpowers`
 
 ---
 

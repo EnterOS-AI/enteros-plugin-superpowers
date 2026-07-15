@@ -142,6 +142,8 @@ class TestCurrentRepositoryGuidance(unittest.TestCase):
         active_paths = (
             'README.md',
             'CLAUDE.md',
+            'known-issues.md',
+            'runbooks/local-dev-setup.md',
             '.gitea/workflows/gitea-merge-queue.yml',
             '.gitea/workflows/sop-checklist-gate.yml',
             '.gitea/scripts/gitea-merge-queue.py',
@@ -154,6 +156,8 @@ class TestCurrentRepositoryGuidance(unittest.TestCase):
         for retired in (
             'github://Molecule-AI',
             'gh CLI authenticated',
+            'Molecule-AI/molecule-ai-plugin-superpowers',
+            'Molecule-AI/internal',
             'Create GitHub Release',
             'operator conductor',
             'operator host',
