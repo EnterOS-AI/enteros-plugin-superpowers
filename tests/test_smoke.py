@@ -118,6 +118,15 @@ class TestAdapters(unittest.TestCase):
             path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
             self.assertTrue(os.path.isfile(path), f"missing adapter for {runtime}")
 
+    def test_adapter_set_matches_declared_runtimes(self):
+        adapters_dir = os.path.join(REPO_ROOT, 'adapters')
+        adapters = {
+            filename.removesuffix('.py')
+            for filename in os.listdir(adapters_dir)
+            if filename.endswith('.py') and filename != '__init__.py'
+        }
+        self.assertEqual(adapters, set(self.runtimes))
+
     def test_declared_runtime_adapters_re_export_agentskills_adaptor(self):
         for runtime in self.runtimes:
             path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
