@@ -47,6 +47,10 @@ class TestPluginManifest(unittest.TestCase):
     def test_runtimes_include_claude_code(self):
         self.assertIn('claude_code', self.manifest.get('runtimes', []))
 
+    def test_runtimes_are_live_platform_runtimes(self):
+        live_runtimes = {'claude_code', 'hermes'}
+        self.assertEqual(set(self.manifest.get('runtimes', [])), live_runtimes)
+
     def test_all_five_skills_declared(self):
         skills = self.manifest.get('skills', [])
         for skill in SKILLS:
@@ -100,27 +104,66 @@ class TestSkillFrontmatter(unittest.TestCase):
 
 
 class TestAdapters(unittest.TestCase):
-    """Verify both runtime adapters re-export AgentskillsAdaptor."""
+    """Verify declared runtime adapters re-export AgentskillsAdaptor."""
 
-    def test_claude_code_adapter_exists(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'claude_code.py')
-        self.assertTrue(os.path.isfile(path))
+    @classmethod
+    def setUpClass(cls):
+        import yaml
+        manifest_path = os.path.join(REPO_ROOT, 'plugin.yaml')
+        with open(manifest_path) as f:
+            cls.runtimes = yaml.safe_load(f).get('runtimes', [])
 
-    def test_deepagents_adapter_exists(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'deepagents.py')
-        self.assertTrue(os.path.isfile(path))
+    def test_declared_runtime_adapters_exist(self):
+        for runtime in self.runtimes:
+            path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
+            self.assertTrue(os.path.isfile(path), f"missing adapter for {runtime}")
 
-    def test_claude_code_re_exports_agentskills_adaptor(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'claude_code.py')
-        with open(path) as f:
-            content = f.read()
-        self.assertIn('AgentskillsAdaptor', content)
+    def test_adapter_set_matches_declared_runtimes(self):
+        adapters_dir = os.path.join(REPO_ROOT, 'adapters')
+        adapters = {
+            filename.removesuffix('.py')
+            for filename in os.listdir(adapters_dir)
+            if filename.endswith('.py') and filename != '__init__.py'
+        }
+        self.assertEqual(adapters, set(self.runtimes))
 
-    def test_deepagents_re_exports_agentskills_adaptor(self):
-        path = os.path.join(REPO_ROOT, 'adapters', 'deepagents.py')
-        with open(path) as f:
-            content = f.read()
-        self.assertIn('AgentskillsAdaptor', content)
+    def test_declared_runtime_adapters_re_export_agentskills_adaptor(self):
+        for runtime in self.runtimes:
+            path = os.path.join(REPO_ROOT, 'adapters', f'{runtime}.py')
+            with open(path) as f:
+                content = f.read()
+            self.assertIn('AgentskillsAdaptor', content, f"{runtime} adapter")
+
+
+class TestCurrentRepositoryGuidance(unittest.TestCase):
+    """Keep active install, release, and workflow guidance domain-only."""
+
+    def test_active_guidance_has_no_retired_scm_or_operator_paths(self):
+        active_paths = (
+            'README.md',
+            'CLAUDE.md',
+            'known-issues.md',
+            'runbooks/local-dev-setup.md',
+            '.gitea/workflows/gitea-merge-queue.yml',
+            '.gitea/workflows/ci.yml',
+            '.gitea/scripts/gitea-merge-queue.py',
+        )
+        active_guidance = '\n'.join(
+            open(os.path.join(REPO_ROOT, path)).read()
+            for path in active_paths
+        )
+        for retired in (
+            'github://Molecule-AI',
+            'gh CLI authenticated',
+            'Molecule-AI/molecule-ai-plugin-superpowers',
+            'Molecule-AI/internal',
+            'Create GitHub Release',
+            'operator conductor',
+            'operator host',
+            '/etc/molecule-bootstrap',
+            'Gitea 1.22.6',
+        ):
+            self.assertNotIn(retired, active_guidance)
 
 
 class TestValidatePlugin(unittest.TestCase):

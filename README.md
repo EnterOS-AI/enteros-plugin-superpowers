@@ -1,6 +1,6 @@
 # superpowers
 
-Agent superpowers — systematic debugging, test-driven development, planning, and verification. Four skills that transform how the agent approaches complex tasks.
+Agent superpowers — systematic debugging, test-driven development, planning, and verification. Five skills that transform how the agent approaches complex tasks.
 
 ## Skills
 
@@ -36,13 +36,12 @@ plugins:
 ### From URL (community install)
 
 ```
-github://Molecule-AI/molecule-ai-plugin-superpowers
+gitea://molecule-ai/molecule-ai-plugin-superpowers#main
 ```
 
 ## Runtimes
 
 - `claude_code` — primary
-- `deepagents` — supported
 - `hermes` — supported
 
 ## Architecture
@@ -56,6 +55,7 @@ skills/
   writing-plans/
 adapters/
   claude_code.py      # Registers all skills
+  hermes.py           # Registers all skills
 ```
 
 ## Known issues

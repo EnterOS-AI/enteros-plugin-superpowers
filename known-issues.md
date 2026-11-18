@@ -51,4 +51,5 @@ When a new issue is identified:
 
 ## Reporting
 
-Use the Molecule-AI/internal issue tracker. Tag with `plugin-superpowers`.
+Use the [molecule-ai/internal Gitea issue tracker](https://git.moleculesai.app/molecule-ai/internal/issues).
+Tag with `plugin-superpowers`.
