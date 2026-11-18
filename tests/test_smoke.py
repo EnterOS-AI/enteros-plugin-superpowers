@@ -145,9 +145,8 @@ class TestCurrentRepositoryGuidance(unittest.TestCase):
             'known-issues.md',
             'runbooks/local-dev-setup.md',
             '.gitea/workflows/gitea-merge-queue.yml',
-            '.gitea/workflows/sop-checklist-gate.yml',
+            '.gitea/workflows/ci.yml',
             '.gitea/scripts/gitea-merge-queue.py',
-            '.gitea/scripts/sop-checklist-gate.py',
         )
         active_guidance = '\n'.join(
             open(os.path.join(REPO_ROOT, path)).read()
